@@ -1,0 +1,367 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+  height: 100vh;
+  overflow: hidden;
+}
+
+.container {
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Login qismi */
+.login-section {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  padding: 40px;
+  text-align: center;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.login-header {
+  margin-bottom: 30px;
+  color: white;
+}
+
+.login-header i {
+  font-size: 3rem;
+  margin-bottom: 15px;
+  color: #64b5f6;
+}
+
+.login-header h2 {
+  font-size: 2rem;
+  font-weight: 300;
+}
+
+.login-form input {
+  width: 300px;
+  padding: 15px 20px;
+  border: none;
+  border-radius: 25px;
+  background: rgba(255, 255, 255, 0.9);
+  margin-bottom: 20px;
+  font-size: 16px;
+  outline: none;
+  transition: all 0.3s ease;
+}
+
+.login-form input:focus {
+  background: white;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.login-form button {
+  width: 300px;
+  padding: 15px;
+  border: none;
+  border-radius: 25px;
+  background: #64b5f6;
+  color: white;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.login-form button:hover {
+  background: #42a5f5;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+/* Chat container */
+.chat-container {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  background: #1a1a2e;
+}
+
+/* Sidebar */
+.sidebar {
+  width: 300px;
+  background: #16213e;
+  border-right: 1px solid #0f3460;
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar-header {
+  padding: 20px;
+  border-bottom: 1px solid #0f3460;
+  color: white;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.sidebar-header i {
+  color: #64b5f6;
+  font-size: 1.2rem;
+}
+
+.online-users {
+  flex: 1;
+  padding: 20px;
+  overflow-y: auto;
+}
+
+.user-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  margin-bottom: 8px;
+  background: rgba(100, 181, 246, 0.1);
+  border-radius: 10px;
+  color: white;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.user-item:hover {
+  background: rgba(100, 181, 246, 0.2);
+}
+
+.user-item.current-user {
+  background: rgba(76, 175, 80, 0.2);
+  border: 1px solid rgba(76, 175, 80, 0.3);
+}
+
+.user-status {
+  width: 8px;
+  height: 8px;
+  background: #4caf50;
+  border-radius: 50%;
+}
+
+.user-info {
+  padding: 20px;
+  border-top: 1px solid #0f3460;
+  color: white;
+  text-align: center;
+}
+
+/* Chat area */
+.chat-area {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background: #1a1a2e;
+}
+
+.chat-header {
+  padding: 20px;
+  border-bottom: 1px solid #0f3460;
+  color: white;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.chat-header i {
+  font-size: 2rem;
+  color: #64b5f6;
+}
+
+.header-text h2 {
+  font-size: 1.5rem;
+  margin-bottom: 5px;
+}
+
+.header-text p {
+  color: #888;
+  font-size: 0.9rem;
+}
+
+.messages-container {
+  flex: 1;
+  padding: 20px;
+  overflow-y: auto;
+  background: #1a1a2e;
+}
+
+.message {
+  margin-bottom: 15px;
+  padding: 12px 16px;
+  border-radius: 15px;
+  max-width: 70%;
+  word-wrap: break-word;
+}
+
+.message.system {
+  background: rgba(100, 181, 246, 0.1);
+  color: #64b5f6;
+  text-align: center;
+  max-width: 100%;
+  font-style: italic;
+}
+
+.message.group {
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  align-self: flex-start;
+}
+
+.message.private {
+  background: rgba(76, 175, 80, 0.2);
+  color: white;
+  align-self: flex-end;
+  margin-left: auto;
+}
+
+.message.private.received {
+  background: rgba(255, 193, 7, 0.2);
+  align-self: flex-start;
+  margin-left: 0;
+}
+
+.message-header {
+  font-size: 0.8rem;
+  color: #888;
+  margin-bottom: 5px;
+}
+
+.message-time {
+  font-size: 0.7rem;
+  color: #666;
+  margin-top: 5px;
+}
+
+/* Message input */
+.message-input-container {
+  padding: 20px;
+  border-top: 1px solid #0f3460;
+}
+
+.chat-mode-selector {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.mode-btn {
+  padding: 8px 16px;
+  border: 1px solid #0f3460;
+  background: transparent;
+  color: #888;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.mode-btn.active,
+.mode-btn:hover {
+  background: #64b5f6;
+  color: white;
+  border-color: #64b5f6;
+}
+
+.private-chat-selector {
+  margin-bottom: 15px;
+}
+
+.private-chat-selector select {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #0f3460;
+  background: #16213e;
+  color: white;
+  border-radius: 10px;
+  outline: none;
+}
+
+.message-input {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.message-input input {
+  flex: 1;
+  padding: 15px 20px;
+  border: 1px solid #0f3460;
+  background: #16213e;
+  color: white;
+  border-radius: 25px;
+  outline: none;
+  font-size: 16px;
+}
+
+.message-input input:focus {
+  border-color: #64b5f6;
+}
+
+.message-input button {
+  width: 50px;
+  height: 50px;
+  border: none;
+  background: #64b5f6;
+  color: white;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.message-input button:hover {
+  background: #42a5f5;
+  transform: scale(1.1);
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #1a1a2e;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #0f3460;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #64b5f6;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .chat-container {
+    flex-direction: column;
+  }
+
+  .sidebar {
+    width: 100%;
+    height: 200px;
+  }
+
+  .message {
+    max-width: 90%;
+  }
+
+  .login-form input,
+  .login-form button {
+    width: 250px;
+  }
+}

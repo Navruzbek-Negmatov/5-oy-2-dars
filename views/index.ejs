@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Login Section -->
+        <div class="login-section" id="loginSection">
+            <div class="login-card">
+                <div class="login-header">
+                    <div class="logo">
+                        <i class="fas fa-comments"></i>
+                    </div>
+                    <h1>Join Chat</h1>
+                    <p>Real-time suhbatga qo'shiling</p>
+                </div>
+                
+                <form class="login-form" id="loginForm">
+                    <div class="input-group">
+                        <i class="fas fa-user"></i>
+                        <input 
+                            type="text" 
+                            id="usernameInput" 
+                            placeholder="Enter your username"
+                            maxlength="20"
+                            required
+                        >
+                    </div>
+                    
+                    <div class="input-group">
+                        <i class="fas fa-door-open"></i>
+                        <select id="roomSelect">
+                            <option value="general">Umumiy xona</option>
+                            <option value="tech">Texnologiya</option>
+                            <option value="random">Tasodifiy</option>
+                        </select>
+                    </div>
+                    
+                    <button type="submit" class="join-btn">
+                        <span>Join Chat</span>
+                        <i class="fas fa-arrow-right"></i>
+                    </button>
+                </form>
+                
+                <div class="stats">
+                    <small><i class="fas fa-users"></i> Hozirda <%= totalUsers %> foydalanuvchi onlayn</small>
+                </div>
+            </div>
+        </div>
+
+        <!-- Chat Container -->
+        <div class="chat-container" id="chatContainer" style="display: none;">
+            <!-- Sidebar -->
+            <aside class="sidebar">
+                <div class="sidebar-header">
+                    <div class="room-info">
+                        <i class="fas fa-hashtag"></i>
+                        <div>
+                            <h3 id="currentRoom">general</h3>
+                            <small>Chat xonasi</small>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="online-section">
+                    <div class="section-header">
+                        <i class="fas fa-circle text-green"></i>
+                        <span>Online Users</span>
+                        <span class="user-count" id="userCount">0</span>
+                    </div>
+                    <div class="online-users" id="onlineUsers">
+                        <!-- Onlayn foydalanuvchilar bu yerda -->
+                    </div>
+                </div>
+                
+                <div class="current-user" id="currentUser">
+                    <!-- Joriy foydalanuvchi ma'lumotlari -->
+                </div>
+            </aside>
+
+            <!-- Main Chat Area -->
+            <main class="chat-main">
+                <header class="chat-header">
+                    <div class="header-content">
+                        <div class="header-icon">
+                            <i class="fas fa-comment-dots"></i>
+                        </div>
+                        <div class="header-text">
+                            <h2>Welcome to Real-time Chat!</h2>
+                            <p>Start chatting with other users</p>
+                        </div>
+                    </div>
+                    <div class="header-actions">
+                        <button class="action-btn" id="clearChatBtn" title="Chatni tozalash">
+                            <i class="fas fa-broom"></i>
+                        </button>
+                        <button class="action-btn" id="settingsBtn" title="Sozlamalar">
+                            <i class="fas fa-cog"></i>
+                        </button>
+                    </div>
+                </header>
+                
+                <div class="messages-area">
+                    <div class="messages-container" id="messagesContainer">
+                        <!-- Xabarlar bu yerda ko'rsatiladi -->
+                    </div>
+                    
+                    <div class="typing-indicator" id="typingIndicator" style="display: none;">
+                        <div class="typing-dots">
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                        </div>
+                        <span class="typing-text"></span>
+                    </div>
+                </div>
+                
+                <footer class="message-input-area">
+                    <div class="chat-mode-tabs">
+                        <button class="mode-tab active" data-mode="group">
+                            <i class="fas fa-users"></i>
+                            <span>Guruh</span>
+                        </button>
+                        <button class="mode-tab" data-mode="private">
+                            <i class="fas fa-user-lock"></i>
+                            <span>Shaxsiy</span>
+                        </button>
+                    </div>
+                    
+                    <div class="private-user-selector" id="privateUserSelector" style="display: none;">
+                        <select id="privateUserSelect">
+                            <option value="">Foydalanuvchini tanlang...</option>
+                        </select>
+                    </div>
+                    
+                    <div class="message-input-container">
+                        <div class="input-wrapper">
+                            <input 
+                                type="text" 
+                                id="messageInput" 
+                                placeholder="Type your message..."
+                                maxlength="500"
+                            >
+                            <div class="input-actions">
+                                <button class="emoji-btn" id="emojiBtn" title="Emoji">
+                                    <i class="fas fa-smile"></i>
+                                </button>
+                                <button class="send-btn" id="sendBtn" title="Yuborish">
+                                    <i class="fas fa-paper-plane"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="message-counter">
+                            <span id="charCounter">0</span>/500
+                        </div>
+                    </div>
+                </footer>
+            </main>
+        </div>
+    </div>
+
+    <!-- Socket.io script tagini body ning oxirida qo'ying -->
+    <script src="/socket.io/socket.io.js"></script>
+    <!-- Custom Scripts -->
+    <script src="/js/socket-handler.js"></script>
+    <script src="/js/client.js"></script>
+</body>
+</html>

@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real-time Chat</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <!-- Login qismi -->
+        <div class="login-section" id="loginSection">
+            <div class="login-header">
+                <i class="fas fa-comments"></i>
+                <h2>Join Chat</h2>
+            </div>
+            <div class="login-form">
+                <input type="text" id="usernameInput" placeholder="Enter your username" maxlength="20">
+                <button id="joinBtn">Join Chat</button>
+            </div>
+        </div>
+
+        <!-- Chat qismi -->
+        <div class="chat-container" id="chatContainer" style="display: none;">
+            <!-- Sidebar -->
+            <div class="sidebar">
+                <div class="sidebar-header">
+                    <i class="fas fa-users"></i>
+                    <h3>Online Users</h3>
+                </div>
+                <div class="online-users" id="onlineUsers">
+                    <!-- Onlayn foydalanuvchilar bu yerda ko'rsatiladi -->
+                </div>
+                <div class="user-info" id="userInfo">
+                    <!-- Foydalanuvchi ma'lumotlari -->
+                </div>
+            </div>
+
+            <!-- Chat maydoni -->
+            <div class="chat-area">
+                <div class="chat-header">
+                    <i class="fas fa-comment-dots"></i>
+                    <div class="header-text">
+                        <h2>Welcome to Real-time Chat!</h2>
+                        <p>Start chatting with other users</p>
+                    </div>
+                </div>
+                
+                <div class="messages-container" id="messagesContainer">
+                    <!-- Xabarlar bu yerda ko'rsatiladi -->
+                </div>
+                
+                <div class="message-input-container">
+                    <div class="chat-mode-selector">
+                        <button class="mode-btn active" data-mode="group">
+                            <i class="fas fa-users"></i> Guruh
+                        </button>
+                        <button class="mode-btn" data-mode="private">
+                            <i class="fas fa-user"></i> Shaxsiy
+                        </button>
+                    </div>
+                    
+                    <div class="private-chat-selector" id="privateChatSelector" style="display: none;">
+                        <select id="privateUserSelect">
+                            <option value="">Foydalanuvchini tanlang...</option>
+                        </select>
+                    </div>
+                    
+                    <div class="message-input">
+                        <input type="text" id="messageInput" placeholder="Type your message...">
+                        <button id="sendBtn">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

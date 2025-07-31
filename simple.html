@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Oddiy Chat</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f0f0f0;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .login-section {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .chat-section {
+            display: none;
+        }
+        
+        #messages {
+            height: 400px;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin-bottom: 10px;
+            background: #fafafa;
+        }
+        
+        .message {
+            margin-bottom: 10px;
+            padding: 8px;
+            border-radius: 5px;
+        }
+        
+        .system {
+            background: #e3f2fd;
+            color: #1976d2;
+            text-align: center;
+            font-style: italic;
+        }
+        
+        .user {
+            background: #f3e5f5;
+            color: #7b1fa2;
+        }
+        
+        input, button {
+            padding: 10px;
+            margin: 5px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        
+        button {
+            background: #2196f3;
+            color: white;
+            cursor: pointer;
+            border: none;
+        }
+        
+        button:hover {
+            background: #1976d2;
+        }
+        
+        .users-list {
+            background: #e8f5e8;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+        
+        .status {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            padding: 10px;
+            border-radius: 5px;
+            color: white;
+        }
+        
+        .connected {
+            background: #4caf50;
+        }
+        
+        .disconnected {
+            background: #f44336;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Oddiy Chat Test</h1>
+        
+        <!-- Login qismi -->
+        <div class="login-section" id="loginSection">
+            <h2>Chatga kirish</h2>
+            <input type="text" id="usernameInput" placeholder="Ismingizni kiriting" maxlength="20">
+            <button onclick="joinChat()">Kirish</button>
+        </div>
+        
+        <!-- Chat qismi -->
+        <div class="chat-section" id="chatSection">
+            <div class="users-list">
+                <strong>Onlayn foydalanuvchilar:</strong>
+                <span id="usersList">Hech kim yo'q</span>
+            </div>
+            
+            <div id="messages"></div>
+            
+            <div>
+                <input type="text" id="messageInput" placeholder="Xabar yozing..." style="width: 70%;">
+                <button onclick="sendMessage()" style="width: 25%;">Yuborish</button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="status disconnected" id="status">Ulanmagan</div>
+
+    <!-- Socket.io script -->
+    <script src="/socket.io/socket.io.js"></script>
+    
+    <script>
+        console.log("Script yuklandi")
+        
+        // Global o'zgaruvchilar
+        let socket = null
+        let currentUser = ""
+        
+        // DOM elementlari
+        const loginSection = document.getElementById("loginSection")
+        const chatSection = document.getElementById("chatSection")
+        const usernameInput = document.getElementById("usernameInput")
+        const messageInput = document.getElementById("messageInput")
+        const messagesDiv = document.getElementById("messages")
+        const usersListSpan = document.getElementById("usersList")
+        const statusDiv = document.getElementById("status")
+        
+        // Socket ulanishini boshlash
+        function initSocket() {
+            try {
+                socket = io()
+                console.log("Socket yaratildi")
+                
+                socket.on("connect", () => {
+                    console.log("Serverga ulandi")
+                    statusDiv.textContent = "Ulandi"
+                    statusDiv.className = "status connected"
+                })
+                
+                socket.on("disconnect", () => {
+                    console.log("Serverdan uzildi")
+                    statusDiv.textContent = "Ulanish uzildi"
+                    statusDiv.className = "status disconnected"
+                })
+                
+                socket.on("message", (data) => {
+                    console.log("Xabar olindi:", data)
+                    addMessage(data)
+                })
+                
+                socket.on("users", (users) => {
+                    console.log("Foydalanuvchilar ro'yxati:", users)
+                    updateUsersList(users)
+                })
+                
+            } catch (error) {
+                console.error("Socket xatosi:", error)
+                statusDiv.textContent = "Xato: " + error.message
+                statusDiv.className = "status disconnected"
+            }
+        }
+        
+        // Chatga kirish
+        function joinChat() {
+            const username = usernameInput.value.trim()
+            
+            if (!username) {
+                alert("Iltimos, ismingizni kiriting!")
+                return
+            }
+            
+            if (username.length < 2) {
+                alert("Ism kamida 2 ta belgidan iborat bo'lishi kerak!")
+                return
+            }
+            
+            currentUser = username
+            console.log("Chatga kirilmoqda:", username)
+            
+            // Socket ulanishini boshlash
+            if (!socket) {
+                initSocket()
+            }
+            
+            // Serverga join xabarini yuborish
+            setTimeout(() => {
+                if (socket && socket.connected) {
+                    socket.emit("join", username)
+                    
+                    // UI ni o'zgartirish
+                    loginSection.style.display = "none"
+                    chatSection.style.display = "block"
+                    messageInput.focus()
+                } else {
+                    alert("Serverga ulanishda xato!")
+                }
+            }, 500)
+        }
+        
+        // Xabar yuborish
+        function sendMessage() {
+            const message = messageInput.value.trim()
+            
+            if (!message) return
+            
+            if (socket && socket.connected) {
+                socket.emit("chat", { message: message })
+                messageInput.value = ""
+            } else {
+                alert("Server bilan aloqa yo'q!")
+            }
+        }
+        
+        // Xabarni ekranga qo'shish
+        function addMessage(data) {
+            const messageDiv = document.createElement("div")
+            messageDiv.className = data.username === "System" ? "message system" : "message user"
+            
+            messageDiv.innerHTML = `
+                <strong>${data.username}:</strong> ${data.message}
+                <small style="float: right; color: #666;">${data.time}</small>
+            `
+            
+            messagesDiv.appendChild(messageDiv)
+            messagesDiv.scrollTop = messagesDiv.scrollHeight
+        }
+        
+        // Foydalanuvchilar ro'yxatini yangilash
+        function updateUsersList(users) {
+            if (users.length === 0) {
+                usersListSpan.textContent = "Hech kim yo'q"
+            } else {
+                usersListSpan.textContent = users.join(", ")
+            }
+        }
+        
+        // Enter tugmasi bilan xabar yuborish
+        messageInput.addEventListener("keypress", (e) => {
+            if (e.key === "Enter") {
+                sendMessage()
+            }
+        })
+        
+        usernameInput.addEventListener("keypress", (e) => {
+            if (e.key === "Enter") {
+                joinChat()
+            }
+        })
+        
+        // Sahifa yuklanganda
+        console.log("Sahifa yuklandi")
+        usernameInput.focus()
+    </script>
+</body>
+</html>

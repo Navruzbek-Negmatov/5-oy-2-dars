@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Chat</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #1a1a2e;
+            color: white;
+            padding: 20px;
+        }
+        .login-section {
+            max-width: 400px;
+            margin: 50px auto;
+            padding: 30px;
+            background: #16213e;
+            border-radius: 10px;
+        }
+        .chat-container {
+            display: none;
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background: #16213e;
+            border-radius: 10px;
+        }
+        input, button {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: none;
+            border-radius: 5px;
+        }
+        button {
+            background: #64b5f6;
+            color: white;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #42a5f5;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-section" id="loginSection">
+        <h2>Test Chat</h2>
+        <form id="loginForm">
+            <input type="text" id="usernameInput" placeholder="Username kiriting" required>
+            <button type="submit">Join Chat</button>
+        </form>
+    </div>
+
+    <div class="chat-container" id="chatContainer">
+        <h2>Chat Area</h2>
+        <div id="messages" style="height: 300px; overflow-y: auto; background: #1a1a2e; padding: 10px; margin: 10px 0;"></div>
+        <div>
+            <input type="text" id="messageInput" placeholder="Xabar yozing...">
+            <button id="sendBtn">Yuborish</button>
+        </div>
+        <div>
+            <h3>Online Users:</h3>
+            <div id="onlineUsers"></div>
+        </div>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        console.log("Script yuklandi")
+        
+        // Socket connection
+        const socket = io()
+        let currentUser = ""
+        
+        // DOM elements
+        const loginForm = document.getElementById("loginForm")
+        const usernameInput = document.getElementById("usernameInput")
+        const loginSection = document.getElementById("loginSection")
+        const chatContainer = document.getElementById("chatContainer")
+        const messageInput = document.getElementById("messageInput")
+        const sendBtn = document.getElementById("sendBtn")
+        const messagesDiv = document.getElementById("messages")
+        const onlineUsersDiv = document.getElementById("onlineUsers")
+        
+        // Login
+        loginForm.addEventListener("submit", function(e) {
+            e.preventDefault()
+            const username = usernameInput.value.trim()
+            
+            if (username) {
+                currentUser = username
+                socket.emit("user-joined", { username: username })
+                
+                loginSection.style.display = "none"
+                chatContainer.style.display = "block"
+                
+                addMessage("Chatga xush kelibsiz!", "system")
+            }
+        })
+        
+        // Send message
+        sendBtn.addEventListener("click", sendMessage)
+        messageInput.addEventListener("keypress", function(e) {
+            if (e.key === "Enter") {
+                sendMessage()
+            }
+        })
+        
+        function sendMessage() {
+            const message = messageInput.value.trim()
+            if (message) {
+                socket.emit("send-group-message", { message: message })
+                messageInput.value = ""
+            }
+        }
+        
+        // Socket events
+        socket.on("connect", function() {
+            console.log("Serverga ulandi")
+            addMessage("Serverga ulandi", "system")
+        })
+        
+        socket.on("user-connected", function(data) {
+            addMessage(data.message, "system")
+        })
+        
+        socket.on("user-disconnected", function(data) {
+            addMessage(data.message, "system")
+        })
+        
+        socket.on("receive-group-message", function(message) {
+            addMessage(`${message.username}: ${message.message}`, "user")
+        })
+        
+        socket.on("online-users", function(users) {
+            onlineUsersDiv.innerHTML = ""
+            users.forEach(function(user) {
+                const userDiv = document.createElement("div")
+                userDiv.textContent = user.username + (user.username === currentUser ? " (Siz)" : "")
+                userDiv.style.padding = "5px"
+                userDiv.style.background = user.username === currentUser ? "#4caf50" : "#64b5f6"
+                userDiv.style.margin = "2px 0"
+                userDiv.style.borderRadius = "3px"
+                onlineUsersDiv.appendChild(userDiv)
+            })
+        })
+        
+        function addMessage(message, type) {
+            const messageDiv = document.createElement("div")
+            messageDiv.textContent = message
+            messageDiv.style.padding = "5px"
+            messageDiv.style.margin = "5px 0"
+            messageDiv.style.background = type === "system" ? "#ff9800" : "#2196f3"
+            messageDiv.style.borderRadius = "5px"
+            messagesDiv.appendChild(messageDiv)
+            messagesDiv.scrollTop = messagesDiv.scrollHeight
+        }
+    </script>
+</body>
+</html>
